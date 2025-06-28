@@ -42,9 +42,9 @@
     }
 
     .infoText {
-      @include responsiveFont(2vw, 15px, 24px);
       opacity: 0;
       transition: 2000ms;
+      @include responsiveFont(2vw, 15px, 24px);
       &.show {
         transition: none;
         opacity: 1;

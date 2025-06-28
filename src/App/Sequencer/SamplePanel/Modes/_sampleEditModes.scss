@@ -75,10 +75,11 @@
   .modWrapper {
     @extend %full;
     @include flex(column, space-evenly);
+    @include responsiveFont(4vw, 14px, 20px);
+    
     @media (orientation: landscape) {
       max-height: 250px;
     }
-    @include responsiveFont(4vw, 14px, 20px);
 
     .modSliderWrapper {
       @extend %full;
