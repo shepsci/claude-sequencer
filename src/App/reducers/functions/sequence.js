@@ -1,5 +1,10 @@
 import { logger } from 'utils/logger';
 
+/**
+ * Calculates note tally statistics for a given pattern
+ * @param {Array} pattern - 2D array representing the sequence pattern
+ * @returns {Object} Object containing note counts and empty status for each track and total
+ */
 export const getNoteTally = pattern => {
   if (!Array.isArray(pattern)) {
     logger.error('getNoteTally -> pattern is not an array', pattern);
@@ -74,6 +79,11 @@ const sampleRegexp = /s(\d+)/g;
 const valsRegexp = /p\w#?\d|v\d+(?:\.\d+)?|l\d+(?:\.\d+)?/g;
 const slicesRegexp = /(n1.*)(n2.*)|n1.*$|n2.*$/;
 
+/**
+ * Converts a pattern object into a compressed string representation
+ * @param {Array} editedPattern - The pattern to serialize
+ * @returns {string} Compressed string representation of the pattern
+ */
 export const getStrFromPattern = editedPattern => {
   const initialPattern = INIT_PATTERN();
   const edits = [];

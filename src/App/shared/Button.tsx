@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { createId } from '@paralleldrive/cuid2';
 import { useTouchAndMouse } from 'hooks/useTouchAndMouse';
+import type { ButtonProps } from 'types/components';
 
-export const Button = ({
+export const Button: React.FC<ButtonProps> = ({
   fwdRef,
   id,
   classes = '',
@@ -13,16 +14,16 @@ export const Button = ({
   ariaLabel = '',
   children,
 }) => {
-  const defaultRef = useRef(null);
+  const defaultRef = useRef<HTMLButtonElement>(null);
   const ref = fwdRef || defaultRef;
 
   const [pressed, setPressed] = useState('');
 
-  const handleTouchStart = (e) => {
+  const handleTouchStart = e => {
     if (startFunc) startFunc(e);
     setPressed(' pressed');
   };
-  const handleTouchEnd = (e) => {
+  const handleTouchEnd = e => {
     setPressed('');
   };
 

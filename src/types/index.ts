@@ -2,3 +2,4 @@
 export * from './app';
 export * from './audio';
 export * from './common';
+export * from './components';
