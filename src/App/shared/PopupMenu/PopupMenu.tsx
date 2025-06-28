@@ -1,9 +1,43 @@
 import { Button } from 'App/shared/Button';
 import { usePopupMenu } from './usePopupMenu';
 import { Portal } from 'App/shared/Portal';
-import { useMemo } from 'react';
+import { useMemo, ReactNode } from 'react';
 
-export const PopupMenu = ({
+interface PopupMenuProps {
+  name: string;
+  Icon: React.ComponentType;
+  disabled?: boolean;
+  addBtnClasses?: string;
+  keepOpenOnSelect?: boolean;
+  active?: boolean;
+  activeCB?: () => void;
+  children: ReactNode;
+}
+
+interface PopupMenuItemsProps {
+  renderMenu: boolean;
+  menuStyle: React.CSSProperties;
+  menuClasses: string;
+  children: ReactNode;
+}
+
+interface MenuItemProps {
+  item: string | number;
+  selected: boolean;
+  onClick: (item: string | number) => void;
+  label?: string;
+  disabled?: boolean;
+  addClass?: string;
+}
+
+interface MenuItemToggleProps {
+  item: string | number;
+  on: boolean;
+  onClick: () => void;
+  label?: string;
+}
+
+export const PopupMenu: React.FC<PopupMenuProps> = ({
   name,
   Icon,
   disabled = false,
@@ -19,7 +53,7 @@ export const PopupMenu = ({
   const memo = useMemo(() => {
     const btnId = `${name}Btn`;
     return (
-      <div ref={btnRef} className='menuBtnWrapper '>
+      <div ref={btnRef} className="menuBtnWrapper ">
         <Button
           id={btnId}
           classes={btnClasses + ' ' + addBtnClasses}
@@ -29,11 +63,7 @@ export const PopupMenu = ({
           <Icon />
           <label htmlFor={btnId}>{name}</label>
         </Button>
-        <PopupMenuItems
-          renderMenu={renderMenu}
-          menuStyle={menuStyle}
-          menuClasses={menuClasses}
-        >
+        <PopupMenuItems renderMenu={renderMenu} menuStyle={menuStyle} menuClasses={menuClasses}>
           {children}
         </PopupMenuItems>
       </div>
@@ -44,6 +74,7 @@ export const PopupMenu = ({
     btnRef,
     children,
     disabled,
+    Icon,
     menuClasses,
     menuStyle,
     name,
@@ -53,10 +84,15 @@ export const PopupMenu = ({
   return memo;
 };
 
-const PopupMenuItems = ({ renderMenu, menuStyle, menuClasses, children }) => {
+const PopupMenuItems: React.FC<PopupMenuItemsProps> = ({
+  renderMenu,
+  menuStyle,
+  menuClasses,
+  children,
+}) => {
   const memo = useMemo(() => {
     return (
-      <Portal targetId='popupMenuPortal'>
+      <Portal targetId="popupMenuPortal">
         <div style={menuStyle} className={menuClasses}>
           {children}
         </div>
@@ -66,7 +102,14 @@ const PopupMenuItems = ({ renderMenu, menuStyle, menuClasses, children }) => {
   return !renderMenu ? null : memo;
 };
 
-export const MenuItem = ({ item, selected, onClick, label, disabled, addClass }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({
+  item,
+  selected,
+  onClick,
+  label,
+  disabled,
+  addClass = '',
+}) => {
   const btnId = `item${item}`;
   let classes = addClass + ' popupMenuBtn';
   if (selected) classes += ' active';
@@ -85,15 +128,11 @@ export const MenuItem = ({ item, selected, onClick, label, disabled, addClass })
   return memo;
 };
 
-export const MenuItemToggle = ({ item, on, onClick, label }) => {
+export const MenuItemToggle: React.FC<MenuItemToggleProps> = ({ item, on, onClick, label }) => {
   const btnId = `itemToggle${item}`;
   const memo = useMemo(() => {
     return (
-      <Button
-        id={btnId}
-        classes={on ? 'popupMenuBtn active' : 'popupMenuBtn'}
-        onClick={onClick}
-      >
+      <Button id={btnId} classes={on ? 'popupMenuBtn active' : 'popupMenuBtn'} onClick={onClick}>
         <label htmlFor={btnId}>{label ? label : item}</label>
       </Button>
     );

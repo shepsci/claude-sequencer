@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from 'App/hooks/redux';
 import { setMode, MODES } from 'App/reducers/editorSlice';
 import { Erase, Slice, Copy } from 'App/Sequencer/SamplePanel/Modes/EraseSliceCopy';
 import { PitchVelocityLength } from 'App/Sequencer/SamplePanel/Modes/PitchVelocityLength';
@@ -12,7 +12,23 @@ import {
 } from 'App/reducers/abstractState/abstractEditorState';
 import { hideEditable, showEditable } from 'utils/toggleClasses';
 
-export const SamplePanel = () => {
+interface SampleEditModes {
+  painting: boolean;
+  erasing: boolean;
+  slicing: boolean;
+  copying: boolean;
+  moddingPitch: boolean;
+  moddingVelocity: boolean;
+  moddingLength: boolean;
+}
+
+interface UseSamplePanelReturn {
+  splitSamplePanel: boolean;
+  sampleEditModes: SampleEditModes;
+  onReturn: () => void;
+}
+
+export const SamplePanel: React.FC = () => {
   const { splitSamplePanel, sampleEditModes, onReturn } = useSamplePanel();
 
   const memo = useMemo(() => {
@@ -38,10 +54,10 @@ export const SamplePanel = () => {
   return memo;
 };
 
-const useSamplePanel = () => {
-  const dispatch = useDispatch();
-  const splitSamplePanel = useSelector((state) => state.screen.splitSamplePanel);
-  const editorMode = useSelector((state) => state.editor.mode);
+const useSamplePanel = (): UseSamplePanelReturn => {
+  const dispatch = useAppDispatch();
+  const splitSamplePanel = useAppSelector(state => state.screen.splitSamplePanel);
+  const editorMode = useAppSelector(state => state.editor.mode);
   const sampleEditModes = getSampleEditModes(editorMode);
   const { painting } = sampleEditModes;
 

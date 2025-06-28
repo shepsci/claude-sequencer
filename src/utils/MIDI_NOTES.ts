@@ -59,4 +59,6 @@ export const MIDI_NOTES = [
   'A4',
   'A#4',
   'B4',
-];
+] as const;
+
+export type MidiNote = (typeof MIDI_NOTES)[number];

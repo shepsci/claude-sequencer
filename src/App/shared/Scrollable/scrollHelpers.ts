@@ -1,6 +1,11 @@
 const NUM_SCROLLS = 3;
 
-export const getFullyScrolled = (container) => {
+interface ScrollState {
+  left: boolean;
+  right: boolean;
+}
+
+export const getFullyScrolled = (container: HTMLElement): ScrollState => {
   const leftFullyScrolled = container.scrollLeft <= 0;
   const scrollRight = container.scrollLeft + container.clientWidth;
   const fullWidth = NUM_SCROLLS * container.clientWidth;
@@ -8,7 +13,7 @@ export const getFullyScrolled = (container) => {
   return { left: leftFullyScrolled, right: rightFullyScrolled };
 };
 
-export const getScrollToLeft = (container, dir) => {
+export const getScrollToLeft = (container: HTMLElement, dir: 'left' | 'right'): number => {
   let offset = container.clientWidth;
   if (dir === 'left') offset *= -1;
   const start = container.scrollLeft;
@@ -16,7 +21,7 @@ export const getScrollToLeft = (container, dir) => {
   return left;
 };
 
-export const scrollToTransport = () => {
+export const scrollToTransport = (): void => {
   const menuBar = document.getElementById('menuBar');
   const transport = document.getElementById('transport');
   if (!menuBar || !transport) return;
