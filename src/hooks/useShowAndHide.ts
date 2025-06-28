@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export const useShowAndHideClass = (baseClasses = '', timeout = 0, trigger1, trigger2) => {
-  const [classes, setClasses] = useState(baseClasses);
+export const useShowAndHideClass = (
+  baseClasses = '',
+  timeout = 0,
+  trigger1?: boolean,
+  trigger2?: boolean
+): string => {
+  const [classes, setClasses] = useState<string>(baseClasses);
 
   const showAndHide = useCallback(
-    (trigger) => {
+    (trigger?: boolean) => {
       if (!trigger) return;
       setClasses(baseClasses + ' show');
       try {
@@ -22,7 +27,7 @@ export const useShowAndHideClass = (baseClasses = '', timeout = 0, trigger1, tri
   return classes;
 };
 
-export const vanillaShowAndHideClass = (id, classToAdd, timeout) => {
+export const vanillaShowAndHideClass = (id: string, classToAdd: string, timeout: number): void => {
   const element = document.getElementById(id);
   if (element) element.classList.add(classToAdd);
   setTimeout(() => {
@@ -30,9 +35,13 @@ export const vanillaShowAndHideClass = (id, classToAdd, timeout) => {
   }, timeout);
 };
 
-export const useAddAndRemoveClass = (baseClasses = '', addClasses = '', timeout = 0) => {
-  const [classes, setClasses] = useState(baseClasses);
-  const [trigger, setTrigger] = useState(false);
+export const useAddAndRemoveClass = (
+  baseClasses = '',
+  addClasses = '',
+  timeout = 0
+): [string, () => void] => {
+  const [classes, setClasses] = useState<string>(baseClasses);
+  const [trigger, setTrigger] = useState<boolean>(false);
   useEffect(() => {
     if (!trigger) return;
     setClasses(baseClasses + ' ' + addClasses);
@@ -46,9 +55,11 @@ export const useAddAndRemoveClass = (baseClasses = '', addClasses = '', timeout 
   return [classes, () => setTrigger(true)];
 };
 
-export const useShowAndHideText = (baseText = '') => {
-  const [text, setText] = useState(baseText);
-  const showAndHideText = (newText, timeout) => {
+export const useShowAndHideText = (
+  baseText = ''
+): [string, (newText: string, timeout: number) => void] => {
+  const [text, setText] = useState<string>(baseText);
+  const showAndHideText = (newText: string, timeout: number): void => {
     setText(newText);
     try {
       setTimeout(() => setText(''), timeout);

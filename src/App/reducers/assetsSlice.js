@@ -3,6 +3,7 @@ import * as remoteKits from 'assets/kits/remote/remoteKits';
 import * as localKits from 'assets/kits/local';
 import { defaultSequences } from 'assets/sequences';
 import { deepCopyKits } from './functions/assets';
+import { logger } from 'utils/logger';
 
 const INITIAL_KITS = {
   ...deepCopyKits(remoteKits),
@@ -26,7 +27,7 @@ export const assetsSlice = createSlice({
       state.kits[kit].available = available;
     },
     setSynched: (state, { payload: { _id, synched } }) => {
-      const seqToUpdate = state.userSequences.find((seqId) => seqId._id === _id);
+      const seqToUpdate = state.userSequences.find(seqId => seqId._id === _id);
       seqToUpdate.synched = synched;
     },
     setFetchingSamples: (state, { payload: { kit, fetching, available } }) => {
@@ -43,20 +44,16 @@ export const checkCachedKits = () => async (dispatch, getState) => {
   try {
     const cacheKeys = await caches.keys();
     const kits = deepCopyKits(getState().assets.kits);
-    cacheKeys.forEach((key) => {
+    cacheKeys.forEach(key => {
       if (kits[key]) kits[key].available = true;
     });
     dispatch(assetsSlice.actions.setKits(kits));
   } catch (e) {
-    console.log('cache unavailable');
+    logger.debug('cache unavailable', e);
   }
 };
 
-export const {
-  setAvailable,
-  setSynched,
-  setFetchingSamples,
-  setUserSequences,
-} = assetsSlice.actions;
+export const { setAvailable, setSynched, setFetchingSamples, setUserSequences } =
+  assetsSlice.actions;
 
 export default assetsSlice.reducer;

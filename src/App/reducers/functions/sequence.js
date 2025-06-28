@@ -1,6 +1,8 @@
-export const getNoteTally = (pattern) => {
+import { logger } from 'utils/logger';
+
+export const getNoteTally = pattern => {
   if (!Array.isArray(pattern)) {
-    console.log('getNoteTally -> pattern is not an array');
+    logger.error('getNoteTally -> pattern is not an array', pattern);
     return;
   }
   let noteTally = {
@@ -10,7 +12,7 @@ export const getNoteTally = (pattern) => {
   pattern[0].forEach((_, i) => {
     noteTally[i] = { count: 0, empty: true };
   });
-  pattern.forEach((step) => {
+  pattern.forEach(step => {
     step.forEach((sample, i) => {
       if (sample.noteOn) {
         noteTally[i].count++;
@@ -41,7 +43,7 @@ export const dec = (noteTally, sample) => {
   if (noteTally.total.count === 0) noteTally.total.empty = true;
 };
 
-export const initSampleStep = (sample) => {
+export const initSampleStep = sample => {
   sample.noteOn = false;
   sample.notes.length = 0;
   sample.notes.push(INIT_NOTE());
@@ -72,7 +74,7 @@ const sampleRegexp = /s(\d+)/g;
 const valsRegexp = /p\w#?\d|v\d+(?:\.\d+)?|l\d+(?:\.\d+)?/g;
 const slicesRegexp = /(n1.*)(n2.*)|n1.*$|n2.*$/;
 
-export const getStrFromPattern = (editedPattern) => {
+export const getStrFromPattern = editedPattern => {
   const initialPattern = INIT_PATTERN();
   const edits = [];
   editedPattern.forEach((step, i) => {
@@ -112,13 +114,13 @@ export const getStrFromPattern = (editedPattern) => {
   return string || 'init';
 };
 
-const getNoteStrFromObj = (note) => `p${note.pitch}v${note.velocity}l${note.length}`;
+const getNoteStrFromObj = note => `p${note.pitch}v${note.velocity}l${note.length}`;
 
-const getNoteObjFromStr = (string) => {
+const getNoteObjFromStr = string => {
   const noteVals = INIT_NOTE();
   const edits = string.match(valsRegexp);
   if (edits) {
-    edits.forEach((edit) => {
+    edits.forEach(edit => {
       switch (edit[0]) {
         case 'p':
           noteVals.pitch = edit.substr(1);
@@ -137,7 +139,7 @@ const getNoteObjFromStr = (string) => {
   return noteVals;
 };
 
-const getVals = (string) => {
+const getVals = string => {
   let sample = { noteOn: false, notes: [] };
   const slices = string.match(slicesRegexp);
   if (slices) {
@@ -176,7 +178,7 @@ const getEntries = (string, regexp) => {
   return entries;
 };
 
-export const getPatternFromStr = (editString) => {
+export const getPatternFromStr = editString => {
   const pattern = INIT_PATTERN();
   if (editString === 'init') return pattern;
   const stepEntries = getEntries(editString, stepRegexp);
@@ -198,7 +200,7 @@ const INIT_MAIN_MIXER = () => ({
   distort: 0,
 });
 
-export const getStrFromMainMixer = (editedMainMixer) => {
+export const getStrFromMainMixer = editedMainMixer => {
   const initialMainMixer = INIT_MAIN_MIXER();
   const edits = [];
   for (let [key, val] of Object.entries(initialMainMixer)) {
@@ -218,7 +220,7 @@ const mainMixerPropertyLookup = {
   d: 'distort',
 };
 
-export const getMainMixerFromStr = (string) => {
+export const getMainMixerFromStr = string => {
   const mainMixer = INIT_MAIN_MIXER();
   if (string === 'init') return mainMixer;
   const edits = string.split(/([a-z]\d+)/g);
@@ -243,7 +245,7 @@ const INIT_SAMPLE_MIXER = () => [
   { vol: 100, pan: 50 },
 ];
 
-export const getStrFromSampleMixer = (editedSampleMixer) => {
+export const getStrFromSampleMixer = editedSampleMixer => {
   const initialSampleMixer = INIT_SAMPLE_MIXER();
   const edits = [];
   editedSampleMixer.forEach((sample, i) => {
@@ -263,7 +265,7 @@ export const getStrFromSampleMixer = (editedSampleMixer) => {
 
 const sampleMixerPropertyLookup = { v: 'vol', p: 'pan' };
 
-export const getSampleMixerFromStr = (string) => {
+export const getSampleMixerFromStr = string => {
   const sampleMixer = INIT_SAMPLE_MIXER();
   if (string === 'init') return sampleMixer;
   const edits = string.split(/S/g);

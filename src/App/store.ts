@@ -6,7 +6,7 @@ import appReducer from 'App/reducers/appSlice';
 import assetsReducer from 'App/reducers/assetsSlice';
 import screenReducer from 'App/reducers/screenSlice';
 
-export default configureStore({
+const store = configureStore({
   reducer: {
     assets: assetsReducer,
     tone: toneReducer,
@@ -15,10 +15,15 @@ export default configureStore({
     app: appReducer,
     screen: screenReducer,
   },
-  middleware: (getDefaultMiddleware) => {
+  middleware: getDefaultMiddleware => {
     return getDefaultMiddleware({
       // immutableCheck: false,
       // serializableCheck: false,
     });
   },
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;
