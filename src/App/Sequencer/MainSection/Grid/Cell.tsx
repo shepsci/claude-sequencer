@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'App/hooks/redux';
 import { SliceIcon } from 'assets/icons';
 import { useCell } from './useCell';
 import { useTouchAndMouse } from 'hooks/useTouchAndMouse';
 import { getGrid } from 'utils/getGrid';
+import type { CellComponentProps, SampleCellsProps, SampleCellProps } from 'types/components';
 
-export const Cell = ({ id, step, prevCellRef }) => {
+export const Cell: React.FC<CellComponentProps> = ({ id, step, prevCellRef }) => {
   const { state, startFunc } = useCell(id, step, prevCellRef);
   const { classes, styles, values } = state;
 
@@ -13,18 +14,13 @@ export const Cell = ({ id, step, prevCellRef }) => {
 
   const cellMemo = useMemo(() => {
     return (
-      <div className='cellWrapper'>
-        <div
-          id={id}
-          className={classes.cell}
-          onTouchStart={onTouchStart}
-          onMouseDown={onMouseDown}
-        >
+      <div className="cellWrapper">
+        <div id={id} className={classes.cell} onTouchStart={onTouchStart} onMouseDown={onMouseDown}>
           <SliceIcon addClass={classes.slice1} />
           <SliceIcon addClass={classes.slice2} />
           <div style={styles.bg} className={classes.bg} />
-          <div className='border' />
-          <div className='pitch'>{values.midiNote}</div>
+          <div className="border" />
+          <div className="pitch">{values.midiNote}</div>
           <SampleCells id={id} step={step} />
         </div>
       </div>
@@ -44,15 +40,15 @@ export const Cell = ({ id, step, prevCellRef }) => {
   return cellMemo;
 };
 
-const SampleCells = ({ id, step }) => {
-  const kit = useSelector((state) => state.sequence.present.kit);
-  const gridSize = useSelector((state) => state.assets.kits[kit].samples.length);
+const SampleCells: React.FC<SampleCellsProps> = ({ id, step }) => {
+  const kit = useAppSelector(state => state.sequence.present.kit);
+  const gridSize = useAppSelector(state => state.assets.kits[kit]?.samples?.length || 0);
 
   const grid = useMemo(() => getGrid(gridSize), [gridSize]);
   const sampleCellsMemo = useMemo(() => {
     return (
-      <div className='sample-cells'>
-        {grid.map((i) => {
+      <div className="sample-cells">
+        {grid.map(i => {
           const scId = `${id}-sample-${i}`;
           return <SampleCell key={scId} id={scId} step={step} i={i} />;
         })}
@@ -62,10 +58,10 @@ const SampleCells = ({ id, step }) => {
   return sampleCellsMemo;
 };
 
-const SampleCell = ({ id, step, i }) => {
-  const noteOn = useSelector((state) => state.sequence.present.pattern[step][i].noteOn);
-  const velocity = useSelector(
-    (state) => state.sequence.present.pattern[step][i].notes[0].velocity
+const SampleCell: React.FC<SampleCellProps> = ({ id, step, i }) => {
+  const noteOn = useAppSelector(state => state.sequence.present.pattern[step][i].noteOn);
+  const velocity = useAppSelector(
+    state => state.sequence.present.pattern[step][i].notes[0].velocity
   );
   const scMemo = useMemo(() => {
     const classes = `sample-cell bg${i}`;

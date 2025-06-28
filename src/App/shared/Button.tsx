@@ -19,11 +19,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   const [pressed, setPressed] = useState('');
 
-  const handleTouchStart = e => {
+  const handleTouchStart = (e: React.TouchEvent<Element> | React.MouseEvent<Element>) => {
     if (startFunc) startFunc(e);
     setPressed(' pressed');
   };
-  const handleTouchEnd = e => {
+  const handleTouchEnd = () => {
     setPressed('');
   };
 
