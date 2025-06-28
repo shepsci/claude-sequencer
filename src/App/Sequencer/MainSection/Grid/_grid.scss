@@ -74,9 +74,9 @@
 
     .pitch {
       z-index: 5;
-      @include responsiveFont(5vw, 14px, 36px);
       padding: 0.15rem;
       color: var(--primary-dark);
+      @include responsiveFont(5vw, 14px, 36px);
     }
   }
 

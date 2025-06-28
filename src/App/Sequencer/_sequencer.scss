@@ -23,13 +23,12 @@
   height: 100%;
   overflow: hidden;
   padding: 0.25rem;
+  touch-action: none;
   @include flex(column);
 
   @media (orientation: landscape) {
     flex-direction: row;
   }
-
-  touch-action: none;
 }
 
 #main {
