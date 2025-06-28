@@ -1,5 +1,5 @@
 export const wait = (timeout, func) =>
-  new Promise((resolve) => {
+  new Promise(resolve => {
     setTimeout(() => {
       if (func) func();
       resolve();
