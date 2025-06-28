@@ -1,6 +1,7 @@
 import * as Tone from 'tone';
 import { NETWORK_TIMEOUT } from 'utils/network';
 import { Kit, kitBus, metronome } from 'App/Tone';
+import { logger } from 'utils/logger';
 
 export const disposeSamplers = () => {
   for (let sample of Kit.samples) {
@@ -12,25 +13,22 @@ export const disposeSamplers = () => {
   Kit.samples.length = 0;
 };
 
-export const buildSamplers = (kitAssets) =>
+export const buildSamplers = kitAssets =>
   new Promise(async (resolve, reject) => {
     const addSamplersPromises = addSamplersToKit(kitAssets);
     try {
-      let rejectTimer = setTimeout(
-        () => reject('timed out loading samples'),
-        NETWORK_TIMEOUT
-      );
+      let rejectTimer = setTimeout(() => reject('timed out loading samples'), NETWORK_TIMEOUT);
       await Promise.all(addSamplersPromises);
       clearTimeout(rejectTimer);
-      console.log(`${Kit.name} buffers loaded!`);
+      logger.info(`${Kit.name} buffers loaded!`);
       resolve();
     } catch (e) {
-      console.error('buildSamplers error -> ', e);
+      logger.error('buildSamplers error', e);
       reject('error loading samples');
     }
   });
 
-const addSamplersToKit = (kitAssets) => {
+const addSamplersToKit = kitAssets => {
   const promises = [];
   for (let [i, sample] of kitAssets.samples.entries()) {
     Kit.samples[i] = { ...sample };
@@ -39,8 +37,8 @@ const addSamplersToKit = (kitAssets) => {
   return promises;
 };
 
-const connectSample = (sample) => {
-  return new Promise((resolve) => {
+const connectSample = sample => {
+  return new Promise(resolve => {
     sample.sampler = new Tone.Sampler({
       urls: { C2: sample.path },
       onload: () => {
@@ -58,29 +56,29 @@ const connectSample = (sample) => {
   });
 };
 
-const scaledGetAndSetVol = (sample) => ({
+const scaledGetAndSetVol = sample => ({
   getRotaryVal: () => {
     let value = sample.channel.volume.value * 4 + 100;
     if (value > 100) value = 100;
     return value;
   },
-  setValFromRotary: (val) => {
+  setValFromRotary: val => {
     sample.channel.set({ volume: (val - 100) * 0.25 });
   },
 });
 
-const scaledGetAndSetPan = (sample) => ({
+const scaledGetAndSetPan = sample => ({
   getRotaryVal: () => {
     const val = sample.channel.pan.value * 50 + 50;
     return val;
   },
-  setValFromRotary: (val) => {
+  setValFromRotary: val => {
     if (val > 40 && val < 59) sample.channel.set({ pan: 0 });
     else sample.channel.set({ pan: (val - 50) / 50 });
   },
 });
 
-export const applySampleMixer = (sampleMixer) => {
+export const applySampleMixer = sampleMixer => {
   sampleMixer.forEach(({ vol, pan }, i) => {
     Kit.samples[i].vol.setValFromRotary(vol);
     Kit.samples[i].pan.setValFromRotary(pan);
