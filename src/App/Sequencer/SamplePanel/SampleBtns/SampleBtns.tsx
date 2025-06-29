@@ -3,12 +3,25 @@ import { useTouchAndMouse } from 'hooks/useTouchAndMouse';
 import * as icons from 'assets/icons/kit';
 import { useSampleBtn, useSampleBtnContainer } from './useSampleBtns';
 
-const SampleBtnContainer = () => {
+interface Sample {
+  name: string;
+  icon: string;
+  color: string;
+}
+
+interface SampleBtnProps {
+  i: number;
+  sample: Sample;
+  selectSample: (index: number) => void;
+  selected: boolean;
+}
+
+const SampleBtnContainer: React.FC = () => {
   const { kit, selectSample, selectedSample } = useSampleBtnContainer();
   const sampleBtnsMemo = useMemo(() => {
     return !kit ? null : (
-      <div className='sampleBtns'>
-        {kit.samples.map((sample, i) => (
+      <div className="sampleBtns">
+        {kit.samples.map((sample: Sample, i: number) => (
           <SampleBtn
             key={`sample-menu-${sample.name}`}
             i={i}
@@ -17,7 +30,7 @@ const SampleBtnContainer = () => {
             selected={selectedSample === i}
           />
         ))}
-        <div id='sampleBtnsBorder' />
+        <div id="sampleBtnsBorder" />
       </div>
     );
   }, [kit, selectSample, selectedSample]);
@@ -25,10 +38,11 @@ const SampleBtnContainer = () => {
 };
 export { SampleBtnContainer as SampleBtns };
 
-const SampleBtn = ({ i, sample, selectSample, selected }) => {
+const SampleBtn: React.FC<SampleBtnProps> = ({ i, sample, selectSample, selected }) => {
   const { containerClass, startFunc, onClick } = useSampleBtn(selectSample, selected, i);
-  const { onTouchStart, onMouseDown } = useTouchAndMouse(startFunc);
+  const { onTouchStart, onMouseDown } = useTouchAndMouse(() => startFunc());
   const memo = useMemo(() => {
+    const iconFunction = (icons as any)[sample.icon];
     return (
       <div
         className={containerClass}
@@ -37,9 +51,9 @@ const SampleBtn = ({ i, sample, selectSample, selected }) => {
         onClick={onClick}
         aria-label={sample.name}
       >
-        {icons[sample.icon](sample.color)}
+        {iconFunction ? iconFunction(sample.color) : null}
         <div className={`border border${i}`} />
-        <div className='bgFlash' />
+        <div className="bgFlash" />
         <div className={`bgSelected bg${i}`} />
       </div>
     );
